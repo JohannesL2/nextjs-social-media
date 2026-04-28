@@ -1,6 +1,11 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { createClient } from "@supabase/supabase-js"
 import {
   Card,
   CardContent,
@@ -20,6 +25,32 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ""
+    )
+
+     const router = useRouter()
+
+     const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault()
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        })
+
+        if (error) {
+            alert(error.message)
+        } else {
+            alert("Login successful!")
+            router.push("/dashboard")
+        }
+    }
+    
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -30,7 +61,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleLogin}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -38,7 +69,9 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
+                  value={email}
                   required
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Field>
               <Field>
@@ -51,7 +84,13 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input 
+                  id="password" 
+                  type="password" 
+                  required 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
