@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono, Roboto } from "next/font/google"
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -23,7 +24,9 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", roboto.variable)}
     >
       <body>
+        <TooltipProvider>
         <ThemeProvider>{children}</ThemeProvider>
+        </TooltipProvider>
       </body>
     </html>
   )

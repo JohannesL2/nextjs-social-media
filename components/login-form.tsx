@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { createClient } from "@supabase/supabase-js"
+import { createBrowserClient } from "@supabase/ssr"
 import {
   Card,
   CardContent,
@@ -29,7 +29,7 @@ export function LoginForm({
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const supabase = createClient(
+    const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL || "",
         process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ""
     )
@@ -46,7 +46,7 @@ export function LoginForm({
         if (error) {
             alert(error.message)
         } else {
-            alert("Login successful!")
+            router.refresh()
             router.push("/dashboard")
         }
     }
