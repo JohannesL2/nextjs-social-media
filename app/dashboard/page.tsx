@@ -15,6 +15,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { CreatePost } from "@/components/create-post"
 
 export default async function Page() {
     const cookieStore = await cookies()
@@ -58,6 +59,7 @@ export default async function Page() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <CreatePost user={user} />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
