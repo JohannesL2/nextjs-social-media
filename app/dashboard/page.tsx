@@ -16,6 +16,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { CreatePost } from "@/components/create-post"
+import { PostCard } from "@/components/social/PostCard"
 
 export default async function Page() {
     const cookieStore = await cookies()
@@ -33,6 +34,11 @@ export default async function Page() {
     )
 
     const { data: { user } } = await supabase.auth.getUser()
+
+    const { data: posts } = await supabase
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false })
 
   return (
     <SidebarProvider>
@@ -63,9 +69,15 @@ export default async function Page() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
+            {posts?.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+
+            {posts?.length === 0 && (
+              <div className="col-span-full text-center text-muted-foreground">
+                No posts yet. Be the first to share something!
+              </div>
+            )}
           </div>
           <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
         </div>
