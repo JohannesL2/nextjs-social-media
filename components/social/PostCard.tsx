@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from "date-fns"
 
-export function PostCard({ post }: { post: any }) {
+export function PostCard({ post, user }: { post: any, user: any }) {
     return (
         <div className="p-5 border rounded-xl bg-card shadow-sm hover:shadow-md transition-shadow border-border/50">
             <div className="flex items-center gap-3 mb-3">
@@ -17,6 +17,23 @@ export function PostCard({ post }: { post: any }) {
             </span>
         </div>
     </div>
+
+    {post.type === "event" && (
+        <>
+        <div className="mb-3 p-3 border rounded-lg bg-secondary/50">
+            <h3 className="text-lg font-semibold">{post.title}</h3>
+            <p className="text-sm text-muted-foreground">
+                Event Date: {new Date(post.event_date).toLocaleDateString()}
+            </p>
+        </div>
+        <span className="font-medium text-foreground">
+            {new Date(post.event_date).toLocaleString('sv-SE', { 
+                                dateStyle: 'medium', 
+                                timeStyle: 'short' 
+                            })}
+        </span>
+        </>
+    )}
 
     <p>{post.content}</p>
 
