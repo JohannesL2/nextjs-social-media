@@ -21,9 +21,9 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", roboto.variable)}
+      className={cn("h-full antialiased", fontMono.variable, "font-sans", roboto.variable)}
     >
-      <body>
+      <body className="h-full">
         <TooltipProvider>
         <ThemeProvider>{children}</ThemeProvider>
         </TooltipProvider>
