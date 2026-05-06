@@ -1,6 +1,27 @@
 import { formatDistanceToNow } from "date-fns"
 
-export function PostCard({ post, user }: { post: any, user: any }) {
+interface Post {
+    id: string;
+    type: "general" | "event";
+    user_email: string;
+    created_at: string | Date;
+    content: string;
+    title?: string;
+    event_date?: string | Date;
+}
+
+interface User {
+    id: string;
+    email: string;
+    name: string;
+}
+
+interface PostCardProps {
+    post: Post;
+    user: User;
+}
+
+export function PostCard({ post, user }: PostCardProps) {
     return (
         <div className="p-5 border rounded-xl bg-card shadow-sm hover:shadow-md transition-shadow border-border/50">
             <div className="flex items-center gap-3 mb-3">
@@ -18,24 +39,19 @@ export function PostCard({ post, user }: { post: any, user: any }) {
         </div>
     </div>
 
-    {post.type === "event" && (
-        <>
+    {post.type === "event" && post.event_date && (
         <div className="mb-3 p-3 border rounded-lg bg-secondary/50">
-            <h3 className="text-lg font-semibold">{post.title}</h3>
+            {post.title && <h3 className="text-lg font-semibold mb-1">{post.title}</h3>}
             <p className="text-sm text-muted-foreground">
-                Event Date: {new Date(post.event_date).toLocaleDateString()}
+                Event Date: {new Date(post.event_date).toLocaleString('sv-SE' , {
+                    dateStyle: 'medium', 
+                    timeStyle: 'short' 
+                })}
             </p>
         </div>
-        <span className="font-medium text-foreground">
-            {new Date(post.event_date).toLocaleString('sv-SE', { 
-                                dateStyle: 'medium', 
-                                timeStyle: 'short' 
-                            })}
-        </span>
-        </>
     )}
 
-    <p>{post.content}</p>
+    <p className="text-sm text-foreground/90 whitespace-pre-wrap">{post.content}</p>
 
     <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border/40">
         <button className="text-xs text-muted-foreground hover:text-primary transition-colors">
