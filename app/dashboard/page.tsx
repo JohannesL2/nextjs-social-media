@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 import { CreatePost } from "@/components/create-post"
 import { PostCard } from "@/components/social/PostCard"
+import { redirect } from "next/navigation"
 
 export default async function Page() {
     const cookieStore = await cookies()
@@ -34,6 +35,10 @@ export default async function Page() {
     )
 
     const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        redirect("/login")
+    }
 
     const { data: posts } = await supabase
         .from("posts")
@@ -69,8 +74,17 @@ export default async function Page() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            
             {posts?.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard 
+                key={post.id} 
+                post={post} 
+                user={{
+                  id: user.id,
+                  email: user.email || "",
+                  name: user.user_metadata?.name || "user"
+                }}
+              />
             ))}
 
             {posts?.length === 0 && (
