@@ -25,9 +25,11 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+    const [mode, setMode] = useState<"login" | "signup">("login")
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
 
     const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -36,9 +38,11 @@ export function LoginForm({
 
      const router = useRouter()
 
-     const handleLogin = async (e: React.FormEvent) => {
+     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        const { data, error } = await supabase.auth.signInWithPassword({
+
+      if (mode === "login") {
+        const { error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
         })
@@ -48,20 +52,46 @@ export function LoginForm({
         } else {
             router.refresh()
             router.push("/dashboard")
+          }
+        } else {
+          if (password !== confirmPassword) {
+              return alert("Passwords do not match")
+            }
+        const { error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+        })
+        if (error) {
+          return alert(error.message)
         }
-    }
+
+          alert("Signup successful! Please check your email to confirm your account.")
+          setMode("login")
+        }
+     }
+
+     const inputStyle = cn(
+    "bg-white/5 dark:bg-black/20 border-white/10 dark:border-white/10 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500",
+    "transition-colors duration-5000 ease-in-out autofill:bg-transparent",
+    "autofill:[-webkit-text-fill-color:rgb(240,240,240)] dark:autofill:[-webkit-text-fill-color:white]",
+    "autofill:[transition:background-color_5000s_ease-in-out_0s]"
+  )
     
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="bg-white/10 dark:bg-zinc-950/20 backdrop-blur-md border-white/10 dark:border-white/5 shadow-2xl">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle>
+            {mode === "login" ? "Login to your account" : "Create an account"}
+          </CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            {mode === "login"
+              ? "Enter your email and password to login"
+              : "Enter your information below to create your account"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -72,6 +102,7 @@ export function LoginForm({
                   value={email}
                   required
                   onChange={(e) => setEmail(e.target.value)}
+                  className={inputStyle}
                 />
               </Field>
               <Field>
@@ -90,12 +121,43 @@ export function LoginForm({
                   required 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className={inputStyle}
                 />
               </Field>
+              {mode === "signup" && (
+                <Field>
+                  <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={inputStyle}
+                  />
+                </Field>
+              )}
+              
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">
+                  {mode === "login" ? "Login" : "Sign up"}
+                </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+                  {mode === "login" ? (
+                    <>
+                      Don&apos;t have an account?{" "}
+                      <button type="button" onClick={() => setMode("signup")} className="underline text-zinc-100 font-medium">
+                        Sign up
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      Already have an account?{" "}
+                      <button type="button" onClick={() => setMode("login")} className="underline text-zinc-100 font-medium">
+                        Login
+                      </button>
+                    </>
+                  )}
                 </FieldDescription>
               </Field>
             </FieldGroup>
