@@ -16,6 +16,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { ChevronRightIcon } from "lucide-react"
+import React from "react"
 
 export function NavMain({
   items,
@@ -31,6 +32,10 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const [openItem, setOpenItem] = React.useState<string | null>(
+    items.find((item) => item.isActive)?.title || null
+  )
+  
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -39,7 +44,10 @@ export function NavMain({
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={item.isActive}
+            open={openItem === item.title}
+            onOpenChange={() => {
+              setOpenItem(openItem === item.title ? null : item.title)
+            }}
             className="group/collapsible"
           >
             <SidebarMenuItem>
