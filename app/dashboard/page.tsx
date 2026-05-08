@@ -20,6 +20,7 @@ import { PostCard } from "@/components/social/PostCard"
 import { redirect } from "next/navigation"
 
 export default async function Page() {
+  
     const cookieStore = await cookies()
 
     const supabase = createServerClient(
@@ -65,12 +66,12 @@ export default async function Page() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>Posts</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <CreatePost user={user} />
+<CreatePost user={user} />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
